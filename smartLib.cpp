@@ -31,6 +31,7 @@ struct buku{
     int jumlahBuku;
     float rating;
     bool tersedia;
+    string judulSebelumnya;
 };
 
 // ==========================================
@@ -41,6 +42,7 @@ AkunUser daftarUser[MAX_USER]; // Array bertipe Struct untuk menampung data user
 buku daftarBuku[MAX_BUKU];
 int jumlahUser = 0;            // Counter untuk menghitung jumlah user yang mendaftar
 int jumlahBuku = 0;
+int index;
 
 // ==========================================
 // 5. IMPLEMENTASI POINTER (Sesi Aktif Login)
@@ -94,7 +96,31 @@ void tampilkanHeaderTengah() {
 }
 
 void editJudul(){
-    
+    bool ulang;
+
+    daftarBuku[index].judulSebelumnya = daftarBuku[index].judul;
+    do{
+        bersihkanLayar();
+        tampilkanHeaderTengah();
+        ulang = false;
+        cetakTengah("======================================================================================", HIJAU_NEON);
+        cout << setw(25) << setfill(' ') << "" << "Masukan Judul Baru   : ";
+        getline (cin, daftarBuku[index].judul);
+
+        if (daftarBuku[index].judul.empty() || daftarBuku[index].judulSebelumnya == daftarBuku[index].judul){
+            cout << "\n";
+            cetakTengah("--------------------------------------------------------------------------------------", HIJAU_NEON);
+            cetakTengah("[ ERROR:  Judul Buku tidak valid! ]", MERAH_CERAH);
+            cetakTengah("Tekan ENTER untuk mengulangi pengisian...", KUNING_EMAS);
+            ulang = true;
+            tungguEnter();
+        } else {
+            cout << "\n";
+            cetakTengah("--------------------------------------------------------------------------------------", HIJAU_NEON);
+            cetakTengah("Judul Buku Berhasil Diganti", HIJAU_NEON);
+            tungguEnter();
+        }
+}while (ulang);
 }
 
 void subEdit(){
@@ -134,13 +160,19 @@ void subEdit(){
             tungguEnter(); 
             continue;
         }
+
+        index = pilihan-1;
         
         do{
             ulang = false;
             bersihkanLayar();
             tampilkanHeaderTengah();
             cetakTengah("======================================================================================", HIJAU_NEON);
-            cetakTengah(daftarBuku[pilihan-1].judul);
+            cout << setw(25) << setfill(' ') << "" << "Judul        : " <<  daftarBuku[pilihan-1].judul << endl;
+            cout << setw(25) << setfill(' ') << "" << "Penulis      : " <<  daftarBuku[pilihan-1].penulis << endl;
+            cout << setw(25) << setfill(' ') << "" << "Tahun Terbit : " <<  daftarBuku[pilihan-1].tahunTerbit << endl;
+            cout << setw(25) << setfill(' ') << "" << "Id           : " <<  daftarBuku[pilihan-1].idBuku << endl;
+            cout << setw(25) << setfill(' ') << "" << "Jumlah Buku  : " <<  daftarBuku[pilihan-1].jumlahBuku << endl;
             cetakTengah("======================================================================================", HIJAU_NEON);
             cout << "\n\n";
 
@@ -173,10 +205,13 @@ void subEdit(){
                 continue;
             }
 
+
             switch (pilihan)
             {
             case 1:
-                //edit judul
+                cin.ignore();
+                editJudul();
+                ulang = true;
                 break;
             
             default:
