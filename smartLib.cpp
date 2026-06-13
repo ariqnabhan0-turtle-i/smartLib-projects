@@ -25,12 +25,22 @@ struct AkunUser {
     string password;
 };
 
+struct Buku {
+    string judul;
+    string penulis;
+    string isbn;
+    int jumlahStok;
+};
+
 // ==========================================
 // 2. IMPLEMENTASI ARRAY (Database Banyak Akun)
 // ==========================================
 const int MAX_USER = 50;
+const int MAX_Buku = 50;
 AkunUser daftarUser[MAX_USER]; // Array bertipe Struct untuk menampung data user
+Buku daftarBuku[MAX_Buku];
 int jumlahUser = 0;            // Counter untuk menghitung jumlah user yang mendaftar
+int jumlahBuku = 0;            
 
 // ==========================================
 // 5. IMPLEMENTASI POINTER (Sesi Aktif Login)
@@ -99,13 +109,60 @@ string inputPasswordMasking() {
     return password;
 }
 
+void tambah_buku() {
+    Buku bukuBaru;
+    char konfirmasi;
+    bersihkanLayar();
+    tampilkanHeaderTengah();
+    cetakTengah("[ MODULE: ADD NEW BOOK ]", MAGENTA_CERAH);
+    cout << "\n\n";
+    cetakTengah("Silahkan masukkan data buku baru di sini.", CYAN_NEON);
+    cout << "\n\n";
+
+    cout << setw(25) << setfill(' ') << "" << "Masukkan Judul Buku : ";
+    getline(cin, bukuBaru.judul);
+    cout << setw(25) << setfill(' ') << "" << "Masukkan Penulis    : ";
+    getline(cin, bukuBaru.penulis);
+    cout << setw(25) << setfill(' ') << "" << "Masukkan ISBN       : ";
+    getline(cin, bukuBaru.isbn);
+    cout << setw(25) << setfill(' ') << "" << "Masukkan Jumlah Stok: ";
+    cin >> bukuBaru.jumlahStok;
+    cin.ignore();
+
+    cetakTengah("--------------------------------------------------------------------------------------", HIJAU_NEON);
+
+    cout<<"APAKAH BUKU YANG ANDA MASUKKAN BENAR? (Y/N): ";
+    cin >> konfirmasi;
+    cin.ignore();
+    if (konfirmasi == 'Y' || konfirmasi == 'y') {
+        daftarBuku[jumlahBuku] = bukuBaru;
+        jumlahBuku++;
+        cout << "Buku berhasil ditambahkan!" << endl;
+    } else {
+        cout << "Penambahan buku dibatalkan." << endl;
+    }
+    cetakTengah("<<<< Tekan tombol apa saja untuk kembali >>>>", HIJAU_NEON);
+    _getch();
+}
+
 void dashboardAdmin() {
+    int pilihanAdmin;
     bersihkanLayar();
     tampilkanHeaderTengah();
     cetakTengah("[ SUCCESS: WELCOME TO ADMIN DASHBOARD ]", HIJAU_NEON);
     cout << "\n\n";
     cetakTengah("Halo Pustakawan! Modul manajemen buku Kelompok 19 siap dijalankan di sini...");
+    cout << "\n\n"<<endl;
+    cetakTengah("Fitur utama: [1] Tambah Buku", CYAN_NEON);
     cout << "\n\n";
+    cout << setw(28) << setfill(' ') << "" << "Masukkan nomor fitur yang ingin dijalankan: ";
+    cin >> pilihanAdmin;
+    cin.ignore(); // Dummy input untuk membersihkan buffer
+    
+    if(pilihanAdmin == 1) {
+        tambah_buku();
+    }
+
     cetakTengah("<<<< Tekan tombol apa saja untuk Log Out >>>>", MERAH_CERAH);
     _getch();
 }
