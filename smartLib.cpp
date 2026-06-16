@@ -68,7 +68,7 @@ void bersihkanLayar() {
 }
 
 void cetakTengah(string teks, string kodeWarna = "") {
-    int lebarTerminal = 94; 
+    int lebarTerminal = 94;
     int panjangTeks = teks.length();
     int padding = (lebarTerminal - panjangTeks) / 2;
     
