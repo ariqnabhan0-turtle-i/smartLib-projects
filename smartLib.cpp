@@ -94,7 +94,6 @@ void cetakTengah(string teks, string kodeWarna = "") {
     }
     cout << kodeWarna << teks << RESET << endl;
 }
-
 void tampilkanHeaderTengah() {
     cout << "\n";
     cetakTengah("======================================================================================", HIJAU_NEON);
