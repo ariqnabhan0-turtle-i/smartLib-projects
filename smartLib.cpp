@@ -920,7 +920,7 @@ int main() {
             cetakTengah("|             SALAM HANGAT DARI KELOMPOK 19              |", HIJAU_NEON);
             cetakTengah("+--------------------------------------------------------+", HIJAU_NEON);
             cout << "\n\n";
-            
+        
             cetakTengah("[ Tekan ENTER untuk menutup terminal ]", MAGENTA_CERAH);
             cin.ignore();
             
