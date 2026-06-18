@@ -40,6 +40,10 @@ struct peminjaman{
     string idBuku;
     string judulBuku;
     bool disetujui;
+    
+    int hariPinjam;
+    int bulanPinjam;
+    int tahunPinjam;
 };
 
 // ==========================================
@@ -439,6 +443,13 @@ void PinjamBuku(){
 			    tungguEnter();
 			    return;
 			}
+			
+			time_t sekarang = time(0);
+			tm *waktu = localtime(&sekarang);	
+			
+			daftarPinjam[jumlahPinjam].hariPinjam  = waktu->tm_mday;
+			daftarPinjam[jumlahPinjam].bulanPinjam = waktu->tm_mon + 1;
+			daftarPinjam[jumlahPinjam].tahunPinjam = waktu->tm_year + 1900;
 
             daftarPinjam[jumlahPinjam].username = userAktif->username;
             daftarPinjam[jumlahPinjam].idBuku = daftarBuku[i].idBuku;
@@ -446,13 +457,26 @@ void PinjamBuku(){
             daftarPinjam[jumlahPinjam].disetujui = false;
             
             daftarBuku[i].jumlahDipinjam++;
+            daftarBuku[i].jumlahBuku--; // stok berkurang
 
             jumlahPinjam++;
             
 
             cetakTengah("[ PENGAJUAN PEMINJAMAN BERHASIL ]", HIJAU_NEON);
-            cetakTengah("Menunggu Verifikasi Admin", KUNING_EMAS);
+            
+            cout << "\n";
 
+			cout << setw(25) << "" << "Nama Peminjam : "
+			     << userAktif->namaLengkap << endl;
+			
+			cout << setw(25) << "" << "ID Buku       : "
+			     << daftarBuku[i].idBuku << endl;
+			
+			cout << setw(25) << "" << "Judul Buku    : "
+			     << daftarBuku[i].judul << endl;
+			     
+			cout << setw(25) << "" << "Tanggal Pinjam : " << waktu->tm_mday << "/" << waktu->tm_mon + 1 << "/" << waktu->tm_year + 1900<< endl;
+			     
             tungguEnter();
             return;
         }
@@ -509,10 +533,40 @@ void PengembalianBuku(){
 
     cetakTengah("=== PENGEMBALIAN BUKU ===", CYAN_NEON);
 
-    cout << "\n";
-
-    cout << setw(25) << "" << "Masukkan ID Buku : ";
-    getline(cin,id);
+	cout << "\n";
+	
+	bool ada = false;
+	
+	cout << setw(20) << "" << "BUKU YANG SEDANG DIPINJAM\n\n";
+	
+	for(int i=0;i<jumlahPinjam;i++){
+	
+	    if(daftarPinjam[i].username == userAktif->username){
+	
+	        ada = true;
+	
+	        cout << setw(20) << ""
+	             << "ID : "
+	             << daftarPinjam[i].idBuku
+	             << " | "
+	             << daftarPinjam[i].judulBuku
+	             << endl;
+	    }
+	}
+	
+	if(!ada){
+	
+	    cetakTengah("[ TIDAK ADA BUKU YANG DIPINJAM ]", MERAH_CERAH);
+	
+	    tungguEnter();
+	    return;
+	}
+	
+	cout << "\n";
+	
+	cout << setw(25) << "" << "Masukkan ID Buku yang dikembalikan : ";
+	
+	getline(cin,id);
 
     bool ditemukan = false;
 
@@ -520,30 +574,70 @@ void PengembalianBuku(){
 
         if(daftarBuku[i].idBuku == id){
 
-            ditemukan = true;
+	    ditemukan = true;
+	
+	    int stokSebelum = daftarBuku[i].jumlahBuku;
+	    
+	    time_t sekarang = time(0);
+		tm *waktu = localtime(&sekarang);
+	
+	    daftarBuku[i].jumlahBuku++;
 
-            daftarBuku[i].jumlahBuku++;
-
-            cout << "\n";
-            cetakTengah("[ PENGEMBALIAN BERHASIL ]", HIJAU_NEON);
-
-            cout << "\n";
-            cout << setw(25) << "" << "Judul Buku : "
-                 << daftarBuku[i].judul << endl;
-
-            cout << setw(25) << "" << "Stok Saat Ini : "
-                 << daftarBuku[i].jumlahBuku << endl;
-
-            break;
-        }
+		// HAPUS DATA PEMINJAMAN YANG SUDAH DIKEMBALIKAN
+		for(int j = 0; j < jumlahPinjam; j++){
+		
+		    if(daftarPinjam[j].username == userAktif->username &&
+		       daftarPinjam[j].idBuku == id){
+		
+		        for(int k = j; k < jumlahPinjam - 1; k++){
+		            daftarPinjam[k] = daftarPinjam[k + 1];
+		        }
+		
+		        jumlahPinjam--;
+		        break;
+		    }
+		}
+		
+		cout << "\n";
+		cetakTengah("[ PENGEMBALIAN BERHASIL ]", HIJAU_NEON);
+	
+	    cout << "\n";
+	    cout << setw(25) << "" << "ID Buku          : "
+	         << daftarBuku[i].idBuku << endl;
+	
+	    cout << setw(25) << "" << "Judul Buku       : "
+	         << daftarBuku[i].judul << endl;
+	
+	    cout << setw(25) << "" << "Penulis          : "
+	         << daftarBuku[i].penulis << endl;
+	         
+	    cout << setw(25) << "" << "Status           : " << "Berhasil Dikembalikan" << endl;
+		
+		for(int j=0; j<jumlahPinjam; j++){
+		
+		    if(daftarPinjam[j].username == userAktif->username &&
+		       daftarPinjam[j].idBuku == id){
+		
+		        cout << setw(25) << "" << "Tanggal Pinjam   : "
+		             << daftarPinjam[j].hariPinjam << "/"
+		             << daftarPinjam[j].bulanPinjam << "/"
+		             << daftarPinjam[j].tahunPinjam
+		             << endl;
+		
+		        break;
+		    }
+		}
+		
+		cout << setw(25) << "" << "Tanggal Kembali  : " << waktu->tm_mday << "/" << waktu->tm_mon + 1 << "/" << waktu->tm_year + 1900 << endl;
+		
+		break;
+	}
     }
 
     if(!ditemukan){
         cetakTengah("[ ID BUKU TIDAK DITEMUKAN ]", MERAH_CERAH);
     }
 
-    cout << "\n";
-    cetakTengah("<<<< Tekan ENTER untuk kembali >>>>", KUNING_EMAS);
     tungguEnter();
 }
 
