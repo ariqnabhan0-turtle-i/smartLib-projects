@@ -32,6 +32,14 @@ struct buku{
     float rating;
     bool tersedia;
     string judulSebelumnya;
+    int jumlahDipinjam;
+};
+
+struct peminjaman{
+    string username;
+    string idBuku;
+    string judulBuku;
+    bool disetujui;
 };
 
 // ==========================================
@@ -43,6 +51,11 @@ buku daftarBuku[MAX_BUKU];
 int jumlahUser = 0;            // Counter untuk menghitung jumlah user yang mendaftar
 int jumlahBuku = 0;
 int index;
+
+// Database Peminjaman
+const int MAX_PINJAM = 100;
+peminjaman daftarPinjam[MAX_PINJAM];
+int jumlahPinjam = 0;
 
 // ==========================================
 // 5. IMPLEMENTASI POINTER (Sesi Aktif Login)
@@ -391,20 +404,211 @@ void dashboardAdmin() {
     tungguEnter();
 }
 
-void dashboardUser(AkunUser* user) {
+void PinjamBuku(){
+    string idCari;
+    bool ditemukan = false;
+
     bersihkanLayar();
     tampilkanHeaderTengah();
-    cetakTengah("[ SUCCESS: WELCOME TO STUDENT DASHBOARD ]", HIJAU_NEON);
-    cout << "\n\n";
-    
-    cetakTengah("Selamat Datang, " + user->namaLengkap + "!", KUNING_EMAS);
-    cetakTengah("Username Anda : " + user->username, CYAN_NEON);
+
+    cetakTengah("=== DAFTAR BUKU ===", CYAN_NEON);
     cout << "\n";
-    cetakTengah("Modul peminjaman buku perpustakaan pintar siap digunakan...", RESET);
-    cout << "\n\n";
-    cetakTengah("<<<< Tekan ENTER untuk Log Out >>>>", MERAH_CERAH);
+
+    for(int i = 0; i < jumlahBuku; i++){
+        cout << setw(20) << "" << "ID : " << daftarBuku[i].idBuku << " | Judul : " << daftarBuku[i].judul << " | Stok : " << daftarBuku[i].jumlahBuku << endl;
+    }
+
+    cout << "\n";
+    cout << setw(25) << "" << "Masukkan ID Buku : ";
+    getline(cin, idCari);
+
+    for(int i = 0; i < jumlahBuku; i++){
+
+        if(daftarBuku[i].idBuku == idCari){
+
+            ditemukan = true;
+
+            if(daftarBuku[i].jumlahBuku <= 0){
+                cetakTengah("[ STOK BUKU HABIS ]", MERAH_CERAH);
+                tungguEnter();
+                return;
+            }
+            
+            if(jumlahPinjam >= MAX_PINJAM){
+			    cetakTengah("[ DATABASE PEMINJAMAN PENUH ]", MERAH_CERAH);
+			    tungguEnter();
+			    return;
+			}
+
+            daftarPinjam[jumlahPinjam].username = userAktif->username;
+            daftarPinjam[jumlahPinjam].idBuku = daftarBuku[i].idBuku;
+            daftarPinjam[jumlahPinjam].judulBuku = daftarBuku[i].judul;
+            daftarPinjam[jumlahPinjam].disetujui = false;
+            
+            daftarBuku[i].jumlahDipinjam++;
+
+            jumlahPinjam++;
+            
+
+            cetakTengah("[ PENGAJUAN PEMINJAMAN BERHASIL ]", HIJAU_NEON);
+            cetakTengah("Menunggu Verifikasi Admin", KUNING_EMAS);
+
+            tungguEnter();
+            return;
+        }
+    }
+
+    if(!ditemukan){
+        cetakTengah("[ BUKU TIDAK DITEMUKAN ]", MERAH_CERAH);
+        tungguEnter();
+    }
+}
+
+void CariBuku(){
+
+    string cari;
+
+    bersihkanLayar();
+    tampilkanHeaderTengah();
+
+    cetakTengah("=== PENCARIAN KOLEKSI BUKU ===", CYAN_NEON);
+
+    cout << "\n";
+    cout << setw(25) << "" << "Masukkan Judul Buku : ";
+    getline(cin,cari);
+
+    for(int i=0;i<jumlahBuku;i++){
+
+        if(daftarBuku[i].judul == cari){
+
+            cout << "\n";
+            cetakTengah("[ BUKU DITEMUKAN ]", HIJAU_NEON);
+
+            cout << "\n";
+            cout << setw(25) << "" << "ID Buku      : " << daftarBuku[i].idBuku << endl;
+            cout << setw(25) << "" << "Judul Buku   : " << daftarBuku[i].judul << endl;
+            cout << setw(25) << "" << "Penulis      : " << daftarBuku[i].penulis << endl;
+            cout << setw(25) << "" << "Tahun Terbit : " << daftarBuku[i].tahunTerbit << endl;
+            cout << setw(25) << "" << "Stok Buku    : " << daftarBuku[i].jumlahBuku << endl;
+
+            tungguEnter();
+            return;
+        }
+    }
+
+    cetakTengah("[ BUKU TIDAK DITEMUKAN ]", MERAH_CERAH);
     tungguEnter();
 }
+
+void PengembalianBuku(){
+
+    string id;
+
+    bersihkanLayar();
+    tampilkanHeaderTengah();
+
+    cetakTengah("=== PENGEMBALIAN BUKU ===", CYAN_NEON);
+
+    cout << "\n";
+
+    cout << setw(25) << "" << "Masukkan ID Buku : ";
+    getline(cin,id);
+
+    bool ditemukan = false;
+
+    for(int i=0;i<jumlahBuku;i++){
+
+        if(daftarBuku[i].idBuku == id){
+
+            ditemukan = true;
+
+            daftarBuku[i].jumlahBuku++;
+
+            cout << "\n";
+            cetakTengah("[ PENGEMBALIAN BERHASIL ]", HIJAU_NEON);
+
+            cout << "\n";
+            cout << setw(25) << "" << "Judul Buku : "
+                 << daftarBuku[i].judul << endl;
+
+            cout << setw(25) << "" << "Stok Saat Ini : "
+                 << daftarBuku[i].jumlahBuku << endl;
+
+            break;
+        }
+    }
+
+    if(!ditemukan){
+        cetakTengah("[ ID BUKU TIDAK DITEMUKAN ]", MERAH_CERAH);
+    }
+
+    cout << "\n";
+    cetakTengah("<<<< Tekan ENTER untuk kembali >>>>", KUNING_EMAS);
+    tungguEnter();
+}
+
+void dashboardUser(AkunUser* user) {
+	int pilihan;
+	do{
+		bersihkanLayar();
+	    tampilkanHeaderTengah();
+	    cetakTengah("[ SUCCESS: WELCOME TO STUDENT DASHBOARD ]", HIJAU_NEON);
+	    cout << "\n\n";
+	    
+	    cetakTengah("Selamat Datang, " + user->namaLengkap + "!", KUNING_EMAS);
+	    cetakTengah("Username Anda : " + user->username, CYAN_NEON);
+	    cout << "\n";
+	    cetakTengah("Modul peminjaman buku perpustakaan pintar siap digunakan...", RESET);
+	    cout << "\n\n";
+	  	cetakTengah("1. CARI BUKU", CYAN_NEON);
+		cetakTengah("2. LIHAT BUKU POPULER", CYAN_NEON);
+		cetakTengah("3. PEMINJAMAN BUKU", CYAN_NEON);
+		cetakTengah("4. DAFTAR BUKU DIPINJAM", CYAN_NEON);
+		cetakTengah("5. PENGEMBALIAN BUKU", CYAN_NEON);
+		cetakTengah("6. BERI RATING BUKU", CYAN_NEON);
+		cetakTengah("0. LOGOUT", CYAN_NEON);
+		
+		cout << "\n";
+		cetakTengah("======================================================================================", HIJAU_NEON);
+		
+		cout << setw(35) << "" << "Pilih Menu : ";
+		cin >> pilihan;
+		cin.ignore();
+		
+		switch(pilihan){
+		
+		    case 1:
+		        CariBuku();
+		        break;
+		
+		    case 2:
+		        //BukuPopuler();
+		        break;
+		
+		    case 3:
+		        PinjamBuku();
+		        break;
+		
+		    case 4:
+		        //DaftarPinjamanSaya();
+		        break;
+		
+		    case 5:
+		        PengembalianBuku();
+		        break;
+		
+		    case 6:
+		        //RatingBuku();
+		        break;
+		
+		    case 0:
+		        return;
+		}
+			    cetakTengah("<<<< Tekan ENTER untuk Log Out >>>>", MERAH_CERAH);
+			    tungguEnter();
+				
+			}while(pilihan != 0);
+		}
 
 // ==========================================
 // 1. IMPLEMENTASI STATEMENT CONTROL & LOOPING
@@ -581,6 +785,8 @@ void subMenuLogin() {
 
 
 
+
+
 int main() {
     string pilihanUtama;
 
@@ -623,10 +829,7 @@ int main() {
             
             cetakTengah("[ Tekan ENTER untuk menutup terminal ]", MAGENTA_CERAH);
             cin.ignore();
-            tungguEnter();
             
-            bersihkanLayar();
-            cout << RESET; 
             exit(0); 
         } else {
             cetakTengah("[!] Pilihan tidak valid, tekan ENTER untuk mengulangi.", MERAH_CERAH);
