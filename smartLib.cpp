@@ -455,6 +455,63 @@ void KelolaDenda(){
     tungguEnter();
 }
 
+void verifikasiPeminjaman(){
+    bersihkanLayar();
+    tampilkanHeaderTengah();
+
+    cetakTengah("=== VERIFIKASI PEMINJAMAN ===", CYAN_NEON);
+
+    cout << endl;
+    if(jumlahPinjam == 0){
+        cetakTengah("[ BELUM ADA PENGAJUAN ]", MERAH_CERAH);
+        tungguEnter();
+        return;
+    }
+
+    for(int i = 0; i < jumlahPinjam; i++){
+        cout << i + 1 << ". " << daftarPinjam[i].username << " | " << daftarPinjam[i].judulBuku << endl;
+    }
+    int pilihan;
+
+	cout << "\nPilih Pengajuan : ";
+	cin >> pilihan;
+	cin.ignore();
+	if(pilihan < 1 || pilihan > jumlahPinjam){
+	    cetakTengah("[ PILIHAN TIDAK VALID ]", MERAH_CERAH);
+	    tungguEnter();
+	    return;
+	}
+	
+	int aksi;
+	cout << "\n1. Setujui";
+	cout << "\n2. Tolak";
+	cout << "\nPilih : ";
+	cin >> aksi;
+	cin.ignore();
+	if(aksi == 1){
+    	daftarPinjam[pilihan - 1].disetujui = true;
+	    for(int i = 0; i < jumlahBuku; i++){
+	        if(daftarBuku[i].idBuku == daftarPinjam[pilihan - 1].idBuku){
+	            daftarBuku[i].jumlahBuku--;
+	            break;
+	        }
+	    }
+	    cetakTengah("[ PEMINJAMAN DISETUJUI ]", HIJAU_NEON);
+	}
+	else if(aksi == 2){
+	    for(int i = pilihan - 1; i < jumlahPinjam - 1; i++){
+	        daftarPinjam[i] = daftarPinjam[i + 1];
+	    }
+	    jumlahPinjam--;
+	    cetakTengah("[ PEMINJAMAN DITOLAK ]", MERAH_CERAH);
+	}
+	else{
+	    cetakTengah("[ AKSI TIDAK VALID ]", MERAH_CERAH);
+	}
+
+    tungguEnter();
+}
+
 void dashboardAdmin() {
     bool ulang;
     int pilihan;
@@ -508,7 +565,10 @@ void dashboardAdmin() {
 		    break;
 		
 		case 5:
-		    //verifikasi peminjaman
+		    cin.ignore();
+		    verifikasiPeminjaman();
+		    ulang = true;
+		    break;
         
         default:
             break;
@@ -581,16 +641,9 @@ void PinjamBuku(){
             cetakTengah("[ PENGAJUAN PEMINJAMAN BERHASIL ]", HIJAU_NEON);
             
             cout << "\n";
-
-			cout << setw(25) << "" << "Nama Peminjam : "
-			     << userAktif->namaLengkap << endl;
-			
-			cout << setw(25) << "" << "ID Buku       : "
-			     << daftarBuku[i].idBuku << endl;
-			
-			cout << setw(25) << "" << "Judul Buku    : "
-			     << daftarBuku[i].judul << endl;
-			     
+			cout << setw(25) << "" << "Nama Peminjam : " << userAktif->namaLengkap << endl;
+			cout << setw(25) << "" << "ID Buku       : " << daftarBuku[i].idBuku << endl;
+			cout << setw(25) << "" << "Judul Buku    : " << daftarBuku[i].judul << endl;   
 			cout << setw(25) << "" << "Tanggal Pinjam : " << waktu->tm_mday << "/" << waktu->tm_mon + 1 << "/" << waktu->tm_year + 1900<< endl;
 			     
             tungguEnter();
