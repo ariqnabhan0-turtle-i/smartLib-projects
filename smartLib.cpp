@@ -800,6 +800,74 @@ void PengembalianBuku(){
     tungguEnter();
 }
 
+void BukuPopuler(){
+
+    bersihkanLayar();
+    tampilkanHeaderTengah();
+
+    cetakTengah("=== REKOMENDASI BUKU POPULER ===", MAGENTA_CERAH);
+    cout << "\n";
+
+    if(jumlahBuku == 0){
+        cetakTengah("[ INFO: Belum ada buku tersedia di sistem. ]", KUNING_EMAS);
+        cout << "\n";
+        tungguEnter();
+        return;
+    }
+
+    int urutan[MAX_BUKU];
+    for(int i = 0; i < jumlahBuku; i++) urutan[i] = i;
+
+    // Skor = rating (60%) + jumlah dipinjam (40%), diurutkan descending
+    for(int i = 0; i < jumlahBuku - 1; i++){
+        for(int j = 0; j < jumlahBuku - i - 1; j++){
+
+            float skorJ     = (daftarBuku[urutan[j]].rating       * 0.6f)
+                             + (daftarBuku[urutan[j]].jumlahDipinjam * 0.4f);
+            float skorJNext = (daftarBuku[urutan[j+1]].rating       * 0.6f)
+                             + (daftarBuku[urutan[j+1]].jumlahDipinjam * 0.4f);
+
+            if(skorJ < skorJNext){
+                int tmp     = urutan[j];
+                urutan[j]   = urutan[j+1];
+                urutan[j+1] = tmp;
+            }
+        }
+    }
+
+    int tampil = (jumlahBuku < 5) ? jumlahBuku : 5;
+
+    cout << left
+         << setw(5)  << "Rank"
+         << setw(25) << "Judul"
+         << setw(18) << "Penulis"
+         << setw(10) << "Rating"
+         << setw(15) << "Dipinjam"
+         << endl;
+
+    cout << string(70,'-') << endl;
+
+    for(int i = 0; i < tampil; i++){
+
+        int idx = urutan[i];
+        string warna = (i == 0) ? KUNING_EMAS : (i == 1) ? CYAN_NEON : (i == 2) ? MAGENTA_CERAH : RESET;
+
+        cout << warna
+             << left
+             << setw(5)  << ("#" + to_string(i+1))
+             << setw(25) << daftarBuku[idx].judul.substr(0, 23)
+             << setw(18) << daftarBuku[idx].penulis.substr(0, 16)
+             << fixed << setprecision(1)
+             << setw(10) << daftarBuku[idx].rating
+             << setw(15) << daftarBuku[idx].jumlahDipinjam
+             << RESET << endl;
+    }
+
+    cout << "\n";
+
+    tungguEnter();
+}
+
 void dashboardUser(AkunUser* user) {
 	int pilihan;
 	do{
@@ -835,7 +903,7 @@ void dashboardUser(AkunUser* user) {
 		        break;
 		
 		    case 2:
-		        //BukuPopuler();
+		        BukuPopuler();
 		        break;
 		
 		    case 3:
