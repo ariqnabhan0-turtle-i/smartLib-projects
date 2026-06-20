@@ -579,8 +579,9 @@ void HapusBuku(){
 }
 
 void KelolaDenda(){
-
-    bersihkanLayar();
+	
+	while (true){
+		bersihkanLayar();
     tampilkanHeaderTengah();
 
     cetakTengah("=== MANAJEMEN DENDA PERPUSTAKAAN ===", CYAN_NEON);
@@ -668,10 +669,12 @@ void KelolaDenda(){
     }
 
     tungguEnter();
+	}
 }
 
 void verifikasiPeminjaman(){
-    bersihkanLayar();
+	while (true){
+		bersihkanLayar();
     tampilkanHeaderTengah();
 
     cetakTengah("=== VERIFIKASI PEMINJAMAN ===", CYAN_NEON);
@@ -725,6 +728,7 @@ void verifikasiPeminjaman(){
 	}
 
     tungguEnter();
+	}
 }
 
 void dashboardAdmin() {
