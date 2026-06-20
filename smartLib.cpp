@@ -3,6 +3,8 @@
 #include <limits>
 #include <iomanip>
 #include <cstdlib>
+#include <ctime>
+#include <sstream>
 
 using namespace std;
 
@@ -29,9 +31,12 @@ struct buku{
     int tahunTerbit;
     string idBuku;
     int jumlahBuku;
+
     float rating;
+    int jumlahPerating;
+    float totalSkorRating;
+
     bool tersedia;
-    string judulSebelumnya;
     int jumlahDipinjam;
 };
 
@@ -121,37 +126,207 @@ void tampilkanHeaderTengah() {
     cout << "\n";
 }
 
-void editJudul(){
+void ratingBuku(){
+    int pilihBuku;
     bool ulang;
+    int rate;
 
-    daftarBuku[index].judulSebelumnya = daftarBuku[index].judul;
     do{
-        bersihkanLayar();
-        tampilkanHeaderTengah();
-        ulang = false;
-        cetakTengah("======================================================================================", HIJAU_NEON);
-        cout << setw(25) << setfill(' ') << "" << "Masukan Judul Baru   : ";
-        getline (cin, daftarBuku[index].judul);
+    ulang = false;
+    bersihkanLayar();
+    tampilkanHeaderTengah();
+    cetakTengah("======================================================================================", HIJAU_NEON);
+    cetakTengah("Rating Buku");
+    cetakTengah("======================================================================================", HIJAU_NEON);
 
-        if (daftarBuku[index].judul.empty() || daftarBuku[index].judulSebelumnya == daftarBuku[index].judul){
-            cout << "\n";
-            cetakTengah("--------------------------------------------------------------------------------------", HIJAU_NEON);
-            cetakTengah("[ ERROR:  Judul Buku tidak valid! ]", MERAH_CERAH);
-            cetakTengah("Tekan ENTER untuk mengulangi pengisian...", KUNING_EMAS);
-            ulang = true;
-            tungguEnter();
-        } else {
-            cout << "\n";
-            cetakTengah("--------------------------------------------------------------------------------------", HIJAU_NEON);
-            cetakTengah("Judul Buku Berhasil Diganti", HIJAU_NEON);
-            tungguEnter();
-        }
-}while (ulang);
+    cout << setw(30) << "Pilih Buku yang ingin diberikan rating" << endl;
+    cout << "\n";
+
+    for (int i = 0; i < jumlahBuku; i++){
+        cout << setw(25) << setfill(' ') << "" << "[" << i+1 << "] " << daftarBuku[i].judul << endl;
+    }
+
+    cout << setw(25) << "[0] Keluar" << endl;
+
+    cetakTengah("======================================================================================", HIJAU_NEON);
+    cetakTengah("Pilih : ");
+
+    cin >> pilihBuku;
+
+    if (cin.fail() || pilihBuku < 0 || pilihBuku > jumlahBuku)
+    {
+        cin.clear();
+        cin.ignore(1000,'\n');
+        cout << setw(30) << "[ERROR] Pilihan tidak valid!" << endl;
+        ulang = true;
+        tungguEnter();
+        continue;
+    } else if (pilihBuku == 0){
+        return;
+    }
+
+    index = pilihBuku - 1;
+
+    bersihkanLayar();
+    cetakTengah("======================================================================================", HIJAU_NEON);
+    cout << setw(30) << "Beri Rating untuk buku : " << daftarBuku[index].judul << endl;
+    cetakTengah("======================================================================================", HIJAU_NEON);
+    cout << "\n\n";
+    cout << setw(30) << "Rating (1-5): ";
+    cin >> rate;
+
+
+    if (cin.fail()|| rate < 1 || rate > 5){
+        cout << setw(30) << MERAH_CERAH << "[ERROR] Input tidak Valid!" << RESET << endl;
+        cin.clear();
+        cin.ignore(1000, '\n');
+        tungguEnter();
+        ulang = true;
+        continue;
+    }
+
+    cetakTengah("======================================================================================");
+    cetakTengah("BERHASIL MEMBERI RATING PADA BUKU", HIJAU_NEON);
+    cetakTengah("Tekan ENTER untuk Kembali", MAGENTA_CERAH);
+    cin.ignore(1000,'\n');
+    tungguEnter();
+
+    daftarBuku[index].jumlahPerating += 1;
+    daftarBuku[index].totalSkorRating += rate;
+
+    daftarBuku[index].rating = daftarBuku[index].totalSkorRating / daftarBuku[index].jumlahPerating;
+    }while(ulang);
 }
+
+void editBuku(){
+    bool ulang_edit;
+    string Sebelumnya; // ini buat edit tipe data string
+    int Sebelumnya_angka; //ini buat edit tipe data int
+    int perubahan = 0;
+
+    Sebelumnya == daftarBuku[index].judul;
+    bersihkanLayar();
+    tampilkanHeaderTengah();
+    cetakTengah("======================================================================================", HIJAU_NEON);
+    cetakTengah("Langsung Tekan Enter jika tidak ingin mengubah bagian ini");
+    cout << setw(25) << setfill(' ') << "" << "Masukan Judul Baru   : ";
+    getline (cin, daftarBuku[index].judul);
+
+    if (daftarBuku[index].judul.empty()){
+        daftarBuku[index].judul = Sebelumnya;
+    } else {
+        perubahan++;
+    }
+
+    Sebelumnya = daftarBuku[index].penulis;
+    bersihkanLayar();
+    tampilkanHeaderTengah();
+    cetakTengah("======================================================================================", HIJAU_NEON);
+    cetakTengah("Langsung Tekan Enter jika tidak ingin mengubah bagian ini");
+    cout << setw(25) << setfill(' ') << "" << "Masukan Nama Penulis Baru   : ";
+    getline (cin, daftarBuku[index].penulis);
+
+    if (daftarBuku[index].penulis.empty()){
+        daftarBuku[index].penulis = Sebelumnya;
+    } else {
+        perubahan++;
+    }
+
+string inputTahun;
+
+do {
+    ulang_edit = false;
+    Sebelumnya_angka = daftarBuku[index].tahunTerbit;
+    
+    bersihkanLayar();
+    tampilkanHeaderTengah();
+    cetakTengah("======================================================================================", HIJAU_NEON);
+    cetakTengah("Menekan ENTER atau memasukkan karakter bukan angka tidak akan mengubah bagian ini");
+    
+    cout << setw(25) << setfill(' ') << "" << "Masukan Tahun Terbit Baru   : ";
+    getline(cin, inputTahun);
+
+    if (inputTahun.empty()) {
+        daftarBuku[index].tahunTerbit = Sebelumnya_angka;
+    } 
+    else {
+        stringstream ss(inputTahun);
+        if (ss >> daftarBuku[index].tahunTerbit) {
+            if (daftarBuku[index].tahunTerbit < 1900 || daftarBuku[index].tahunTerbit > 2026) {
+                cout << "\n";
+                cetakTengah("--------------------------------------------------------------------------------------", HIJAU_NEON);
+                cetakTengah("[ERROR] Tahun Tidak Valid!", MERAH_CERAH);
+                daftarBuku[index].tahunTerbit = Sebelumnya_angka;
+                ulang_edit = true;
+                tungguEnter();
+            } else {
+                perubahan++;
+            }
+            
+        } else {
+            daftarBuku[index].tahunTerbit = Sebelumnya_angka;
+        }
+    }
+} while (ulang_edit);
+
+    Sebelumnya = daftarBuku[index].idBuku;
+    bersihkanLayar();
+    tampilkanHeaderTengah();
+    cetakTengah("======================================================================================", HIJAU_NEON);
+    cetakTengah("Langsung Tekan Enter jika tidak ingin mengubah bagian ini");
+    cout << setw(25) << setfill(' ') << "" << "Masukan id Buku Baru   : ";
+    getline (cin, daftarBuku[index].idBuku);
+
+    if (daftarBuku[index].idBuku.empty()){
+        daftarBuku[index].idBuku = Sebelumnya;
+    } else {
+        perubahan++;
+    }
+
+    string inputJumlah;
+
+Sebelumnya_angka = daftarBuku[index].jumlahBuku;
+
+bersihkanLayar();
+tampilkanHeaderTengah();
+cetakTengah("======================================================================================", HIJAU_NEON);
+cetakTengah("Menekan ENTER, Angka 0, atau Bukan Angka akan membuat bagian ini tidak berubah");
+
+cout << setw(25) << setfill(' ') << "" << "Masukan Jumlah Baru   : ";
+getline(cin, inputJumlah);
+
+if (inputJumlah.empty()) {
+    daftarBuku[index].jumlahBuku = Sebelumnya_angka;
+} 
+else {
+    stringstream ss(inputJumlah);
+    if (ss >> daftarBuku[index].jumlahBuku) {
+        if (daftarBuku[index].jumlahBuku <= 0) {
+            daftarBuku[index].jumlahBuku = Sebelumnya_angka;
+        } else {
+            perubahan++; 
+        }
+        
+    } else {
+        daftarBuku[index].jumlahBuku = Sebelumnya_angka;
+    }
+}
+
+    bersihkanLayar();
+    cetakTengah("======================================================================================");
+    cetakTengah("Buku Berhasil Diedit!", HIJAU_NEON);
+    cout << setw(30) << perubahan << " Perubahan Berhasil Diterapkan" << endl;
+    cetakTengah("======================================================================================");
+    tungguEnter();
+    cetakTengah("Tekan ENTER Untuk Melanjutkan");
+    bersihkanLayar();
+}
+
 
 void subEdit(){
     bool ulang;
-    int pilihan = -1;
+    char pilihan;
+    int idx = 0;
 
     do{
         ulang = false;
@@ -162,13 +337,14 @@ void subEdit(){
 
         for (int i = 0; i < jumlahBuku; i++)
         {
-            cout << setw(25) << setfill(' ') << "" << "[" << i+1 << "]   " << daftarBuku[i].judul << endl;
+            cout << setw(25) << setfill(' ') << "" << "[" << i+1 << "] " << daftarBuku[i].judul << endl;
         }
+        cout << setw(25) << setfill(' ') << "" << "[0] Keluar" << endl;
         cout << "\n";
         cetakTengah("======================================================================================", HIJAU_NEON);
 
         cout << setw(35) << setfill(' ') << "" << "Pilih Buku untuk diedit : ";
-        cin >> pilihan;
+        cin >> idx;
 
         if (cin.fail()) {
             ulang = true;
@@ -179,7 +355,7 @@ void subEdit(){
             tungguEnter();
             continue;
 
-        } else if (pilihan <= 0 || pilihan > jumlahBuku){
+        } else if (idx < 0 || idx > jumlahBuku){
             cetakTengah("[ERROR] Buku Tidak ditemukan!");
             cetakTengah("<<<< Tekan ENTER untuk mengulang >>>>", KUNING_EMAS);
             ulang = true;
@@ -187,60 +363,48 @@ void subEdit(){
             continue;
         }
 
-        index = pilihan-1;
+        if (idx == 0){return;}
+
+        index = idx-1;
         
         do{
             ulang = false;
             bersihkanLayar();
             tampilkanHeaderTengah();
             cetakTengah("======================================================================================", HIJAU_NEON);
-            cout << setw(25) << setfill(' ') << "" << "Judul        : " <<  daftarBuku[pilihan-1].judul << endl;
-            cout << setw(25) << setfill(' ') << "" << "Penulis      : " <<  daftarBuku[pilihan-1].penulis << endl;
-            cout << setw(25) << setfill(' ') << "" << "Tahun Terbit : " <<  daftarBuku[pilihan-1].tahunTerbit << endl;
-            cout << setw(25) << setfill(' ') << "" << "Id           : " <<  daftarBuku[pilihan-1].idBuku << endl;
-            cout << setw(25) << setfill(' ') << "" << "Jumlah Buku  : " <<  daftarBuku[pilihan-1].jumlahBuku << endl;
+            cout << setw(30) << setfill(' ') << "" << "Judul        : " <<  daftarBuku[index].judul << endl;
+            cout << setw(30) << setfill(' ') << "" << "Penulis      : " <<  daftarBuku[index].penulis << endl;
+            cout << setw(30) << setfill(' ') << "" << "Tahun Terbit : " <<  daftarBuku[index].tahunTerbit << endl;
+            cout << setw(30) << setfill(' ') << "" << "Id           : " <<  daftarBuku[index].idBuku << endl;
+            cout << setw(30) << setfill(' ') << "" << "Jumlah Buku  : " <<  daftarBuku[index].jumlahBuku << endl;
             cetakTengah("======================================================================================", HIJAU_NEON);
             cout << "\n\n";
 
-            cetakTengah("1.EDIT JUDUL");
-            cetakTengah("2.EDIT PENULIS");
-            cetakTengah("3.EDIT TAHUN TERBIT");
-            cetakTengah("4.EDIT ID BUKU");
-            cetakTengah("5.EDIT JUMLAH BUKU");
-            cetakTengah("6.EDIT KESELURUHAN INFORMASI BUKU");
-            cetakTengah("0.KELUAR");
+            cetakTengah("Apakah anda yakin ingin mengedit informasi buku ini? (y/n)");
             cout << "\n\n";
             cetakTengah("======================================================================================", HIJAU_NEON);
             cout << "\n\n";
             cout << setw(25) << setfill(' ') << "" << "Pilih Menu     : ";
             cin >> pilihan;
 
-            if (cin.fail()) {
-            ulang = true;
-            cetakTengah("[ERROR] INPUT Tidak valid");
-            cetakTengah("<<<< Tekan ENTER untuk mengulang >>>>", KUNING_EMAS);
-            cin.clear();
-            cin.ignore(1000,'\n');
-            tungguEnter();
-            continue;
-            } else if (pilihan < 0 || pilihan > 6){
-                cetakTengah("[ERROR] Pilihan Harus antara 0-6!");
-                cetakTengah("<<<< Tekan ENTER untuk mengulang >>>>", KUNING_EMAS);
-                ulang = true;
-                tungguEnter(); 
-                continue;
-            }
-
-
             switch (pilihan)
             {
-            case 1:
+            case 'y':
                 cin.ignore();
-                editJudul();
-                ulang = true;
+                editBuku();
                 break;
-            
+            case 'Y':
+                cin.ignore();
+                editBuku();
+                break;
+            case 'n':
+                break;
+            case 'N':
+                break;
             default:
+                cetakTengah("[ERROR] INPUT Tidak valid");
+                cetakTengah("<<<< Tekan ENTER untuk mengulang >>>>", KUNING_EMAS);
+                ulang = true;
                 break;
             }
 
@@ -344,12 +508,15 @@ void TambahBuku() {
             return;
         }
         
-        daftarBuku[jumlahBuku].judul         = judulInput;
-        daftarBuku[jumlahBuku].penulis       = penulisInput;
-        daftarBuku[jumlahBuku].tahunTerbit   = tahunInput;
-        daftarBuku[jumlahBuku].idBuku        = idInput;
-        daftarBuku[jumlahBuku].jumlahBuku    = banyakInput;
-        daftarBuku[jumlahBuku].tersedia      = true;
+        daftarBuku[jumlahBuku].judul           = judulInput;
+        daftarBuku[jumlahBuku].penulis         = penulisInput;
+        daftarBuku[jumlahBuku].tahunTerbit     = tahunInput;
+        daftarBuku[jumlahBuku].idBuku          = idInput;
+        daftarBuku[jumlahBuku].jumlahBuku      = banyakInput;
+        daftarBuku[jumlahBuku].tersedia        = true;
+        daftarBuku[jumlahBuku].rating          = 0;
+        daftarBuku[jumlahBuku].jumlahPerating  = 0;
+        daftarBuku[jumlahBuku].totalSkorRating = 0;
         jumlahBuku++;
         
         cout << "\n";
@@ -972,7 +1139,7 @@ void dashboardUser(AkunUser* user) {
 		        break;
 		
 		    case 6:
-		        //RatingBuku();
+                ratingBuku();
 		        break;
 		
 		    case 0:
