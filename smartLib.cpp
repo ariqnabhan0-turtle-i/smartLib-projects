@@ -529,6 +529,54 @@ void TambahBuku() {
         return; 
     }
 }
+void HapusBuku(){
+    string idCari;
+    bool ditemukan = false;
+
+    bersihkanLayar();
+    tampilkanHeaderTengah();
+
+    cetakTengah("=== HAPUS BUKU ===", CYAN_NEON);
+    cout << "\n";
+
+    if(jumlahBuku == 0){
+        cetakTengah("[ BELUM ADA BUKU TERDAFTAR ]", MERAH_CERAH);
+        cin.ignore();
+        tungguEnter();
+        return;
+    }
+
+    cout << setw(20) << "" << "DAFTAR BUKU\n\n";
+    for(int i = 0; i < jumlahBuku; i++){
+        cout << setw(20) << "" << "ID : " << daftarBuku[i].idBuku << " | Judul : " << daftarBuku[i].judul << endl;
+    }
+    cout << setw(25) << "" << "Masukkan ID Buku : ";
+    getline(cin, idCari);
+
+    for(int i = 0; i < jumlahBuku; i++){
+
+        if(daftarBuku[i].idBuku == idCari){
+
+            ditemukan = true;
+
+            for(int j = i; j < jumlahBuku - 1; j++){
+                daftarBuku[j] = daftarBuku[j + 1];
+            }
+            jumlahBuku--;
+            cetakTengah("[ BUKU BERHASIL DIHAPUS ]", HIJAU_NEON);
+            cin.ignore();
+            tungguEnter();
+            break;
+        }
+    }
+
+    if(!ditemukan){
+        cetakTengah("[ BUKU TIDAK DITEMUKAN ]", MERAH_CERAH);
+    }
+
+    tungguEnter();
+
+}
 
 void KelolaDenda(){
 
@@ -724,7 +772,10 @@ void dashboardAdmin() {
             break;
             
         case 3:
-		    //hapus buku
+		    cin.ignore();
+            HapusBuku();
+            ulang = true;
+            break;
 		
 		case 4:
 		    KelolaDenda();
