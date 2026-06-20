@@ -1155,9 +1155,8 @@ void dashboardUser(AkunUser* user) {
 	  	cetakTengah("1. CARI BUKU", CYAN_NEON);
 		cetakTengah("2. LIHAT BUKU POPULER", CYAN_NEON);
 		cetakTengah("3. PEMINJAMAN BUKU", CYAN_NEON);
-		cetakTengah("4. DAFTAR BUKU DIPINJAM", CYAN_NEON);
-		cetakTengah("5. PENGEMBALIAN BUKU", CYAN_NEON);
-		cetakTengah("6. BERI RATING BUKU", CYAN_NEON);
+		cetakTengah("4. PENGEMBALIAN BUKU", CYAN_NEON);
+		cetakTengah("5. BERI RATING BUKU", CYAN_NEON);
 		cetakTengah("0. LOGOUT", CYAN_NEON);
 		
 		cout << "\n";
@@ -1182,17 +1181,13 @@ void dashboardUser(AkunUser* user) {
 		        break;
 		
 		    case 4:
-		        //DaftarPinjamanSaya();
-		        break;
-		
-		    case 5:
 		        PengembalianBuku();
 		        break;
 		
-		    case 6:
-                ratingBuku();
+		    case 5:
+		        ratingBuku();
 		        break;
-		
+	
 		    case 0:
 		        return;
 		}
