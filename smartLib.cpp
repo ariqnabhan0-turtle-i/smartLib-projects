@@ -673,36 +673,30 @@ void KelolaDenda(){
         continue;
     }
     
-        if(pilih == 1){
+        if (pilih == 1) {
+            string user;
+            cout << "\nMasukkan Username : ";
+            getline(cin, user);
 
-        string user;
+            bool ditemukan = false;
+            int totalDilunasi = 0; 
 
-        cout << "\nMasukkan Username : ";
-        getline(cin,user);
-
-        bool ditemukan = false;
-
-        for(int i=0; i<jumlahPinjam; i++){
-
-            if(daftarPinjam[i].username == user &&
-               daftarPinjam[i].denda > 0){
-
-                daftarPinjam[i].sudahDibayar = true;
-
-                cetakTengah("[ DENDA BERHASIL DILUNASI ]",
-                            HIJAU_NEON);
-
-                ditemukan = true;
-                break;
+            for (int i = 0; i < jumlahPinjam; i++) {
+                if (daftarPinjam[i].username == user && daftarPinjam[i].denda > 0 && !daftarPinjam[i].sudahDibayar) {
+                    daftarPinjam[i].sudahDibayar = true;
+                    totalDilunasi += daftarPinjam[i].denda;
+                    ditemukan = true;
+                }
             }
-        }
 
-        if(!ditemukan){
-
-            cetakTengah("[ DATA TIDAK DITEMUKAN ]",
-                        MERAH_CERAH);
-        }
-    } else if (pilih == 0){
+            if (ditemukan) {
+                cout << "\n";
+                cetakTengah("[ BERHASIL! TOTAL RP " + to_string(totalDilunasi) + " TELAH DILUNASI ]", HIJAU_NEON);
+            } else {
+                cout << "\n";
+                cetakTengah("[ DATA TIDAK DITEMUKAN / SUDAH LUNAS ]", MERAH_CERAH);
+            }
+        } else if (pilih == 0){
         bersihkanLayar();
         return;
     } else {
@@ -903,6 +897,15 @@ void PinjamBuku(){
 
     bersihkanLayar();
     tampilkanHeaderTengah();
+
+    for (int i = 0; i < jumlahPinjam; i++) {
+        if (daftarPinjam[i].username == userAktif->username && daftarPinjam[i].denda > 0 && !daftarPinjam[i].sudahDibayar) {
+            cetakTengah("[ AKSES DITOLAK! ANDA MEMILIKI DENDA BELUM LUNAS ]", MERAH_CERAH);
+            cetakTengah("Silakan lunasi denda Anda ke Pustakawan terlebih dahulu.", KUNING_EMAS);
+            tungguEnter();
+            return; 
+        }
+    }
 
     cetakTengah("=== DAFTAR BUKU ===", CYAN_NEON);
     cout << "\n";
@@ -1148,6 +1151,8 @@ void PengembalianBuku(){
     (waktu->tm_year + 1900 - daftarPinjam[indexPinjam].tahunPinjam) * 365 +
     (waktu->tm_mon + 1 - daftarPinjam[indexPinjam].bulanPinjam) * 30 +
     (waktu->tm_mday - daftarPinjam[indexPinjam].hariPinjam);
+
+    // lamaPinjam = 12; // ini buat kita demo kode ntar
 
 		int telat = lamaPinjam - 7;
 		
