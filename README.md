@@ -22,7 +22,7 @@ Aplikasi ini membagi fungsionalitas menjadi dua *role* utama yang terintegrasi:
  * **Pencarian Koleksi (CariBuku):** Mencari buku secara instan berdasarkan judul yang cocok secara presisi.
  * **Pengajuan Peminjaman Real-time (PinjamBuku):** Menggunakan pustaka <ctime> untuk mencatat tanggal peminjaman berdasarkan waktu lokal komputer saat tombol ditekan. Stok buku otomatis berkurang 1 unit setelah pengajuan diajukan.
  * **Pengembalian & Kalkulasi Denda (PengembalianBuku):** Menghitung durasi pinjam secara otomatis dengan rumus konversi hari (Tahun, Bulan, Hari). Batas peminjaman gratis adalah **7 Hari**. Keterlambatan dikenakan denda akumulatif sebesar **Rp 2.000 / hari**.
- * **Rekomendasi Buku Populer (BukuPopuler):** Mengimplementasikan algoritma **Bubble Sort** untuk merangking 5 buku teratas. Skor kepopuleran dihitung menggunakan bobot formula:
+ * **Rekomendasi Buku Populer (BukuPopuler):** Memberikan rekomendasi berdasarakan rating yang diberikan oleh User dan juga berapa banyak suatu buku di pinjaman oleh beberapa User
    
  * **Rating Buku Interaktif (ratingBuku):** Mahasiswa memberikan evaluasi skor skala 1–5 yang langsung dikonversi menjadi rata-rata rating baru secara *real-time*.
 ## 🛠️ Komponen Arsitektur Kode
