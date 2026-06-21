@@ -8,7 +8,6 @@
 
 using namespace std;
 
-// Palet Warna Premium CLI (Murni ANSI)
 const string RESET         = "\033[0m"; 
 const string HIJAU_NEON    = "\033[1;32m"; 
 const string CYAN_NEON     = "\033[1;36m"; 
@@ -16,9 +15,6 @@ const string MAGENTA_CERAH = "\033[1;35m";
 const string MERAH_CERAH   = "\033[1;31m"; 
 const string KUNING_EMAS   = "\033[1;33m";
 
-// ==========================================
-// 4. IMPLEMENTASI STRUCT
-// ==========================================
 struct AkunUser {
     string namaLengkap;
     string username;
@@ -61,31 +57,19 @@ struct peminjaman{
 	int hariTelat;
 };
 
-// ==========================================
-// 2. IMPLEMENTASI ARRAY (Database Banyak Akun)
-// ==========================================
 const int MAX_USER = 50, MAX_BUKU = 100;
-AkunUser daftarUser[MAX_USER]; // Array bertipe Struct untuk menampung data user
+AkunUser daftarUser[MAX_USER]; 
 buku daftarBuku[MAX_BUKU];
-int jumlahUser = 0;            // Counter untuk menghitung jumlah user yang mendaftar
+int jumlahUser = 0;            
 int jumlahBuku = 0;
 int index;
 
-// Database Peminjaman
 const int MAX_PINJAM = 100;
 peminjaman daftarPinjam[MAX_PINJAM];
 int jumlahPinjam = 0;
 
-// ==========================================
-// 5. IMPLEMENTASI POINTER (Sesi Aktif Login)
-// ==========================================
-AkunUser* userAktif = nullptr; // Pointer untuk menunjuk akun siapa yang sedang login
+AkunUser* userAktif = nullptr; 
 
-// ==========================================
-// 3. IMPLEMENTASI FUNCTION
-// ==========================================
-
-// buat ganti getch() itu
 void tungguEnter() {
     string dummy;
     getline(cin, dummy);
@@ -139,17 +123,24 @@ void ratingBuku(){
     cetakTengah("Rating Buku");
     cetakTengah("======================================================================================", HIJAU_NEON);
 
-    cout << setw(30) << "Pilih Buku yang ingin diberikan rating" << endl;
+    if (jumlahBuku == 0){
+        cetakTengah("[BELUM ADA BUKU YANG TERSEDIA DI PERPUSTAKAAN]");
+        cetakTengah("Tekan ENTER untuk Melanjutkan", HIJAU_NEON);
+        tungguEnter();
+        return;
+    }
+
+    cetakTengah("Pilih Buku yang ingin diberikan rating");
     cout << "\n";
 
     for (int i = 0; i < jumlahBuku; i++){
-        cout << setw(25) << setfill(' ') << "" << "[" << i+1 << "] " << daftarBuku[i].judul << endl;
+        cout << setw(30) << setfill(' ') << "" << "[" << i+1 << "] " << daftarBuku[i].judul << endl;
     }
 
-    cout << setw(25) << "[0] Keluar" << endl;
+    cout << setw(30) << setfill(' ') << "" << "[0] Keluar" << endl;
 
     cetakTengah("======================================================================================", HIJAU_NEON);
-    cetakTengah("Pilih : ");
+    cout << setw(30) << setfill(' ') << "" << "Pilih: ";
 
     cin >> pilihBuku;
 
@@ -157,7 +148,7 @@ void ratingBuku(){
     {
         cin.clear();
         cin.ignore(1000,'\n');
-        cout << setw(30) << "[ERROR] Pilihan tidak valid!" << endl;
+        cetakTengah("[ERROR] Pilihan tidak valid!");
         ulang = true;
         tungguEnter();
         continue;
@@ -169,15 +160,15 @@ void ratingBuku(){
 
     bersihkanLayar();
     cetakTengah("======================================================================================", HIJAU_NEON);
-    cout << setw(30) << "Beri Rating untuk buku : " << daftarBuku[index].judul << endl;
+    cout << setw(30) << setfill(' ') << "" << "Beri Rating untuk buku : " << daftarBuku[index].judul << endl;
     cetakTengah("======================================================================================", HIJAU_NEON);
     cout << "\n\n";
-    cout << setw(30) << "Rating (1-5): ";
+    cout << setw(30) << setfill(' ') << "" << "Rating (1-5): ";
     cin >> rate;
 
 
     if (cin.fail()|| rate < 1 || rate > 5){
-        cout << setw(30) << MERAH_CERAH << "[ERROR] Input tidak Valid!" << RESET << endl;
+        cetakTengah("[ERROR] Input tidak Valid!", MERAH_CERAH);
         cin.clear();
         cin.ignore(1000, '\n');
         tungguEnter();
@@ -204,7 +195,7 @@ void editBuku(){
     int Sebelumnya_angka; //ini buat edit tipe data int
     int perubahan = 0;
 
-    Sebelumnya == daftarBuku[index].judul;
+    Sebelumnya = daftarBuku[index].judul;
     bersihkanLayar();
     tampilkanHeaderTengah();
     cetakTengah("======================================================================================", HIJAU_NEON);
@@ -285,40 +276,40 @@ do {
 
     string inputJumlah;
 
-Sebelumnya_angka = daftarBuku[index].jumlahBuku;
+    Sebelumnya_angka = daftarBuku[index].jumlahBuku;
 
-bersihkanLayar();
-tampilkanHeaderTengah();
-cetakTengah("======================================================================================", HIJAU_NEON);
-cetakTengah("Menekan ENTER, Angka 0, atau Bukan Angka akan membuat bagian ini tidak berubah");
+    bersihkanLayar();
+    tampilkanHeaderTengah();
+    cetakTengah("======================================================================================", HIJAU_NEON);
+    cetakTengah("Menekan ENTER, Angka 0, atau Bukan Angka akan membuat bagian ini tidak berubah");
 
-cout << setw(25) << setfill(' ') << "" << "Masukan Jumlah Baru   : ";
-getline(cin, inputJumlah);
+    cout << setw(25) << setfill(' ') << "" << "Masukan Jumlah Baru   : ";
+    getline(cin, inputJumlah);
 
-if (inputJumlah.empty()) {
-    daftarBuku[index].jumlahBuku = Sebelumnya_angka;
-} 
-else {
-    stringstream ss(inputJumlah);
-    if (ss >> daftarBuku[index].jumlahBuku) {
-        if (daftarBuku[index].jumlahBuku <= 0) {
-            daftarBuku[index].jumlahBuku = Sebelumnya_angka;
-        } else {
-            perubahan++; 
-        }
-        
-    } else {
+    if (inputJumlah.empty()) {
         daftarBuku[index].jumlahBuku = Sebelumnya_angka;
+    } 
+    else {
+        stringstream ss(inputJumlah);
+        if (ss >> daftarBuku[index].jumlahBuku) {
+            if (daftarBuku[index].jumlahBuku <= 0) {
+                daftarBuku[index].jumlahBuku = Sebelumnya_angka;
+            } else {
+                perubahan++; 
+            }
+            
+        } else {
+            daftarBuku[index].jumlahBuku = Sebelumnya_angka;
+        }
     }
-}
 
     bersihkanLayar();
     cetakTengah("======================================================================================");
     cetakTengah("Buku Berhasil Diedit!", HIJAU_NEON);
-    cout << setw(30) << perubahan << " Perubahan Berhasil Diterapkan" << endl;
+    cout << setw(30) << setfill(' ') << "" << perubahan << " Perubahan Berhasil Diterapkan" << endl;
     cetakTengah("======================================================================================");
-    tungguEnter();
     cetakTengah("Tekan ENTER Untuk Melanjutkan");
+    tungguEnter();
     bersihkanLayar();
 }
 
@@ -363,7 +354,10 @@ void subEdit(){
             continue;
         }
 
-        if (idx == 0){return;}
+        if (idx == 0){
+            bersihkanLayar();
+            return;
+        }
 
         index = idx-1;
         
@@ -390,11 +384,11 @@ void subEdit(){
             switch (pilihan)
             {
             case 'y':
-                cin.ignore();
+                cin.ignore(1000, '\n');
                 editBuku();
                 break;
             case 'Y':
-                cin.ignore();
+                cin.ignore(1000, '\n');
                 editBuku();
                 break;
             case 'n':
@@ -411,9 +405,7 @@ void subEdit(){
 
 
         } while (ulang);
-    }while(ulang);
-    
-    
+    }while(ulang);  
 }
 
 void TambahBuku() {
@@ -455,20 +447,47 @@ void TambahBuku() {
             continue;
         }
         
+        string tahun;
         cout << setw(25) << setfill(' ') << "" << "Masukkan Tahun Terbit     : ";
-        cin >> tahunInput;
-        if (tahunInput < 1900 || tahunInput > 2026){
-            cin.ignore();
+        getline(cin, tahun);
+
+    if (tahun.empty()) {
+        cout << "\n";
+        cetakTengah("--------------------------------------------------------------------------------------", HIJAU_NEON);
+        cetakTengah("[ ERROR:  Tahun Terbit tidak boleh kosong! ]", MERAH_CERAH);
+        cetakTengah("Tekan ENTER untuk mengulangi pengisian...", KUNING_EMAS);
+        tungguEnter();
+        continue;
+    } else {
+        stringstream ss(tahun);
+        if (!(ss >> tahunInput) || tahunInput < 1900 || tahunInput > 2026) {
             cout << "\n";
             cetakTengah("--------------------------------------------------------------------------------------", HIJAU_NEON);
-            cetakTengah("[ ERROR:  Tahun Terbit tidak valid! ]", MERAH_CERAH);
+            cetakTengah("[ ERROR:  Tahun Terbit tidak valid! Harus berupa angka. ]", MERAH_CERAH);
             cetakTengah("Tekan ENTER untuk mengulangi pengisian...", KUNING_EMAS);
             tungguEnter();
             continue;
         }
+    }
 
         cout << setw(25) << setfill(' ') << "" << "Masukkan id Buku          : ";
-        cin >> idInput;
+        getline(cin, idInput);
+
+        bool kembar = false;
+        for (int i = 0; i < jumlahBuku; i++) {
+            if (daftarBuku[i].idBuku == idInput) {
+                cetakTengah("[ ERROR: id '" + idInput + "' sudah ada! ]", MERAH_CERAH);
+                cetakTengah("Silakan tekan ENTER untuk kembali.", KUNING_EMAS);
+                tungguEnter();
+                kembar = true;
+                break;
+            }
+        }
+
+        if (kembar){
+            continue;
+        }
+
         if (idInput.length() < 4|| idInput.length() > 4 ){
             cin.ignore();
             cout << "\n";
@@ -479,34 +498,29 @@ void TambahBuku() {
             continue;
         }
 
-        cout << setw(25) << setfill(' ') << "" << "Masukkan jumlah Buku      : ";
-        cin >> banyakInput;
-        if (banyakInput <= 0){
-            cin.ignore();
+    string inputJumlah;
+
+    cout << setw(25) << setfill(' ') << "" << "Masukkan jumlah Buku      : ";
+    getline(cin, inputJumlah);
+
+    if (inputJumlah.empty()) {
+        cout << "\n";
+        cetakTengah("--------------------------------------------------------------------------------------", HIJAU_NEON);
+        cetakTengah("[ ERROR:  Jumlah Buku tidak boleh kosong! ]", MERAH_CERAH);
+        cetakTengah("Tekan ENTER untuk mengulangi pengisian...", KUNING_EMAS);
+        tungguEnter();
+        continue; 
+    } else {
+        stringstream ss(inputJumlah);
+        if (!(ss >> banyakInput) || banyakInput <= 0) {
             cout << "\n";
             cetakTengah("--------------------------------------------------------------------------------------", HIJAU_NEON);
-            cetakTengah("[ ERROR:  Jumlah Buku tidak boleh kosong atau kurang! ]", MERAH_CERAH);
+            cetakTengah("[ ERROR:  Jumlah Buku tidak valid! Harus angka lebih dari 0. ]", MERAH_CERAH);
             cetakTengah("Tekan ENTER untuk mengulangi pengisian...", KUNING_EMAS);
             tungguEnter();
             continue;
         }
-        cin.ignore();
-        
-        bool bukuKembar = false;
-        for (int i = 0; i < jumlahBuku; i++) {
-            if (daftarBuku[i].idBuku == idInput) {
-                bukuKembar = true;
-                break;
-            }
-        }
-
-        
-        if (bukuKembar) {
-            cetakTengah("[ ERROR: id '" + idInput + "' sudah ada! ]", MERAH_CERAH);
-            cetakTengah("Silakan tekan ENTER untuk kembali.", KUNING_EMAS);
-            tungguEnter();
-            return;
-        }
+    }
         
         daftarBuku[jumlahBuku].judul           = judulInput;
         daftarBuku[jumlahBuku].penulis         = penulisInput;
@@ -541,8 +555,8 @@ void HapusBuku(){
 
     if(jumlahBuku == 0){
         cetakTengah("[ BELUM ADA BUKU TERDAFTAR ]", MERAH_CERAH);
-        cin.ignore();
         tungguEnter();
+        bersihkanLayar();
         return;
     }
 
@@ -552,6 +566,20 @@ void HapusBuku(){
     }
     cout << setw(25) << "" << "Masukkan ID Buku : ";
     getline(cin, idCari);
+
+    bool sedangDipinjam = false;
+    for(int i = 0; i < jumlahPinjam; i++) {
+        if(daftarPinjam[i].idBuku == idCari && !daftarPinjam[i].sudahKembali) {
+            sedangDipinjam = true;
+            break;
+        }
+    }
+
+    if (sedangDipinjam) {
+        cetakTengah("[ ERROR: Buku sedang dipinjam mahasiswa! Tidak bisa dihapus. ]", MERAH_CERAH);
+        tungguEnter();
+        return;
+    }
 
     for(int i = 0; i < jumlahBuku; i++){
 
@@ -564,17 +592,17 @@ void HapusBuku(){
             }
             jumlahBuku--;
             cetakTengah("[ BUKU BERHASIL DIHAPUS ]", HIJAU_NEON);
-            cin.ignore();
             tungguEnter();
+            bersihkanLayar();
             break;
         }
     }
 
     if(!ditemukan){
         cetakTengah("[ BUKU TIDAK DITEMUKAN ]", MERAH_CERAH);
+        tungguEnter();
+        bersihkanLayar();
     }
-
-    tungguEnter();
 
 }
 
@@ -635,7 +663,15 @@ void KelolaDenda(){
     int pilih;
     cout << "Pilih : ";
     cin >> pilih;
-    cin.ignore();
+    cin.ignore(1000,'\n');
+
+    if(cin.fail()){
+        cetakTengah("INPUT HARUS BERUPA ANGKA!", MERAH_CERAH);
+        cin.clear();
+        cin.ignore(1000,'\n');
+        tungguEnter();
+        continue;
+    }
     
         if(pilih == 1){
 
@@ -666,76 +702,130 @@ void KelolaDenda(){
             cetakTengah("[ DATA TIDAK DITEMUKAN ]",
                         MERAH_CERAH);
         }
+    } else if (pilih == 0){
+        bersihkanLayar();
+        return;
+    } else {
+        cetakTengah("PILIHAN Tidak valid!", MERAH_CERAH);
     }
 
     tungguEnter();
+    bersihkanLayar();
 	}
+}
+
+void ubahStokBuku(buku* targetBuku, int perubahan) {
+    targetBuku->jumlahBuku += perubahan;
 }
 
 void verifikasiPeminjaman(){
-	while (true){
-		bersihkanLayar();
-    tampilkanHeaderTengah();
+    while (true){
+        bersihkanLayar();
+        tampilkanHeaderTengah();
 
-    cetakTengah("=== VERIFIKASI PEMINJAMAN ===", CYAN_NEON);
+        cetakTengah("=== VERIFIKASI PEMINJAMAN ===", CYAN_NEON);
+        cout << endl;
 
-    cout << endl;
-    if(jumlahPinjam == 0){
-        cetakTengah("[ BELUM ADA PENGAJUAN ]", MERAH_CERAH);
+        if(jumlahPinjam == 0){
+            cetakTengah("[ BELUM ADA PENGAJUAN ]", MERAH_CERAH);
+            tungguEnter();
+            bersihkanLayar();
+            return;
+        }
+
+        int mapIndex[MAX_PINJAM];
+        int tampilCount = 0;
+
+        for(int i = 0; i < jumlahPinjam; i++){
+            if (daftarPinjam[i].disetujui == false){
+                mapIndex[tampilCount] = i;
+                tampilCount++;
+                cout << setw(30) << setfill(' ') << "" << tampilCount << ". " 
+                     << daftarPinjam[i].username << " | " << daftarPinjam[i].judulBuku << endl;
+            }
+        }
+        if (tampilCount == 0) {
+            cetakTengah("[ SEMUA PENGAJUAN SUDAH DIVERIFIKASI ]", KUNING_EMAS);
+            tungguEnter();
+            bersihkanLayar();
+            return;
+        }
+
+        cout << setw(30) << setfill(' ') << "" << "0. Keluar\n";
+        
+        int pilihan;
+        cout << "\nPilih Pengajuan : ";
+        cin >> pilihan;
+
+        if (cin.fail()) {
+            cetakTengah("[ ERROR: INPUT TIDAK VALID ]", MERAH_CERAH);
+            cin.clear();
+            cin.ignore(1000, '\n');
+            tungguEnter();
+            continue;
+        }
+        cin.ignore(1000, '\n');
+
+        if (pilihan == 0){
+            bersihkanLayar();
+            return;
+        }
+
+        if(pilihan < 0 || pilihan > tampilCount){
+            cetakTengah("[ PILIHAN TIDAK VALID ]", MERAH_CERAH);
+            tungguEnter();
+            continue;
+        }
+
+        int indexAsli = mapIndex[pilihan - 1];
+
+        int aksi;
+        cout << "\n1. Setujui";
+        cout << "\n2. Tolak";
+        cout << "\nPilih : ";
+        cin >> aksi;
+
+        if (cin.fail()) {
+            cetakTengah("[ ERROR: INPUT TIDAK VALID ]", MERAH_CERAH);
+            cin.clear();
+            cin.ignore(1000, '\n');
+            tungguEnter();
+            continue;
+        }
+        cin.ignore(1000, '\n');
+
+        if(aksi == 1){
+            daftarPinjam[indexAsli].disetujui = true;
+            cetakTengah("[ PEMINJAMAN DISETUJUI ]", HIJAU_NEON);
+        }
+        else if(aksi == 2){
+            for (int i = 0; i < jumlahBuku; i++) {
+                if(daftarBuku[i].idBuku == daftarPinjam[indexAsli].idBuku){
+                    ubahStokBuku(&daftarBuku[i], 1);
+                    break;
+                }
+            }
+
+            for(int i = indexAsli; i < jumlahPinjam - 1; i++){
+                daftarPinjam[i] = daftarPinjam[i + 1];
+            }
+            jumlahPinjam--;
+            cetakTengah("[ PEMINJAMAN DITOLAK & STOK DIKEMBALIKAN ]", MERAH_CERAH);
+        } else {
+            cetakTengah("[ AKSI TIDAK VALID ]", MERAH_CERAH);
+        }
+
         tungguEnter();
-        return;
     }
-
-    for(int i = 0; i < jumlahPinjam; i++){
-        cout << i + 1 << ". " << daftarPinjam[i].username << " | " << daftarPinjam[i].judulBuku << endl;
-    }
-    int pilihan;
-
-	cout << "\nPilih Pengajuan : ";
-	cin >> pilihan;
-	cin.ignore();
-	if(pilihan < 1 || pilihan > jumlahPinjam){
-	    cetakTengah("[ PILIHAN TIDAK VALID ]", MERAH_CERAH);
-	    tungguEnter();
-	    return;
-	}
-	
-	int aksi;
-	cout << "\n1. Setujui";
-	cout << "\n2. Tolak";
-	cout << "\nPilih : ";
-	cin >> aksi;
-	cin.ignore();
-	if(aksi == 1){
-    	daftarPinjam[pilihan - 1].disetujui = true;
-	    for(int i = 0; i < jumlahBuku; i++){
-	        if(daftarBuku[i].idBuku == daftarPinjam[pilihan - 1].idBuku){
-	            daftarBuku[i].jumlahBuku--;
-	            break;
-	        }
-	    }
-	    cetakTengah("[ PEMINJAMAN DISETUJUI ]", HIJAU_NEON);
-	}
-	else if(aksi == 2){
-	    for(int i = pilihan - 1; i < jumlahPinjam - 1; i++){
-	        daftarPinjam[i] = daftarPinjam[i + 1];
-	    }
-	    jumlahPinjam--;
-	    cetakTengah("[ PEMINJAMAN DITOLAK ]", MERAH_CERAH);
-	}
-	else{
-	    cetakTengah("[ AKSI TIDAK VALID ]", MERAH_CERAH);
-	}
-
-    tungguEnter();
-	}
 }
+
 
 void dashboardAdmin() {
     bool ulang;
     int pilihan;
 
     do{
+        bersihkanLayar();
         tampilkanHeaderTengah();
         cetakTengah("[ SUCCESS: WELCOME TO ADMIN DASHBOARD ]", HIJAU_NEON);
         cout << "\n\n";
@@ -745,13 +835,12 @@ void dashboardAdmin() {
         cetakTengah("2. EDIT BUKU", CYAN_NEON);  
         cetakTengah("3. HAPUS BUKU", CYAN_NEON);  
         cetakTengah("4. MENGELOLA DENDA", CYAN_NEON);  
-        cetakTengah("5. VERIFIKASI PEMINJAMAN", CYAN_NEON);  
-        cetakTengah("6. VERIFIKASI PEMBATALAN", CYAN_NEON);  
+        cetakTengah("5. VERIFIKASI PEMINJAMAN", CYAN_NEON);   
         cetakTengah("0. LOG OUT", CYAN_NEON);   
         cout << "\n";
         cetakTengah("======================================================================================", HIJAU_NEON);
   
-        cout << setw(35) << setfill(' ') << "" << "Pilih Menu (0-6) : ";
+        cout << setw(35) << setfill(' ') << "" << "Pilih Menu (0-5) : ";
         cin >> pilihan;
         ulang = false;
         if (cin.fail()){
@@ -791,15 +880,21 @@ void dashboardAdmin() {
 		    verifikasiPeminjaman();
 		    ulang = true;
 		    break;
+
+        case 0:
+            cetakTengah("<<<< Tekan ENTER untuk Log Out >>>>", MERAH_CERAH);
+            cin.ignore();
+            tungguEnter();
+            return;
         
         default:
+            cetakTengah("Pilihan Tidak Valid!", MERAH_CERAH);
+            tungguEnter();
+            ulang = true;
             break;
         }
         
     }while (ulang);
-    cout << "\n\n";
-    cetakTengah("<<<< Tekan ENTER untuk Log Out >>>>", MERAH_CERAH);
-    tungguEnter();
 }
 
 void PinjamBuku(){
@@ -837,6 +932,22 @@ void PinjamBuku(){
 			    tungguEnter();
 			    return;
 			}
+
+            bool sedangDipinjamUserIni = false;
+            for (int j = 0; j < jumlahPinjam; j++) {
+                if (daftarPinjam[j].username == userAktif->username && 
+                    daftarPinjam[j].idBuku == idCari && 
+                    !daftarPinjam[j].sudahKembali) {
+                    sedangDipinjamUserIni = true;
+                    break;
+                }
+            }
+
+            if (sedangDipinjamUserIni) {
+                cetakTengah("[ ERROR: Anda sedang meminjam buku ini! ]", MERAH_CERAH);
+                tungguEnter();
+                return;
+            }
 			
 			time_t sekarang = time(0);
 			tm *waktu = localtime(&sekarang);	
@@ -855,7 +966,7 @@ void PinjamBuku(){
 			daftarPinjam[jumlahPinjam].sudahDibayar = false;
             
             daftarBuku[i].jumlahDipinjam++;
-            daftarBuku[i].jumlahBuku--; // stok berkurang
+            ubahStokBuku(&daftarBuku[i], -1);
 
             jumlahPinjam++;
             
@@ -933,7 +1044,7 @@ void PengembalianBuku(){
 	for(int i=0;i<jumlahPinjam;i++){
 	
 	    if(daftarPinjam[i].username == userAktif->username &&
-   daftarPinjam[i].sudahKembali == false){
+   daftarPinjam[i].sudahKembali == false && daftarPinjam[i].disetujui == true){
 	
 	        ada = true;
 	
@@ -1093,7 +1204,6 @@ void BukuPopuler(){
     int urutan[MAX_BUKU];
     for(int i = 0; i < jumlahBuku; i++) urutan[i] = i;
 
-    // Skor = rating (60%) + jumlah dipinjam (40%), diurutkan descending
     for(int i = 0; i < jumlahBuku - 1; i++){
         for(int j = 0; j < jumlahBuku - i - 1; j++){
 
@@ -1168,6 +1278,14 @@ void dashboardUser(AkunUser* user) {
 		
 		cout << setw(35) << "" << "Pilih Menu : ";
 		cin >> pilihan;
+
+        if(cin.fail()){
+            cetakTengah("INPUT HARUS BERUPA ANGKA!", MERAH_CERAH);
+            cin.clear();
+            cin.ignore(1000, '\n');
+            tungguEnter();
+            continue;
+        }
 		cin.ignore();
 		
 		switch(pilihan){
@@ -1193,17 +1311,14 @@ void dashboardUser(AkunUser* user) {
 		        break;
 	
 		    case 0:
-		        return;
-		}
-			    cetakTengah("<<<< Tekan ENTER untuk Log Out >>>>", MERAH_CERAH);
+                cetakTengah("<<<< Tekan ENTER untuk Log Out >>>>", MERAH_CERAH);
 			    tungguEnter();
-				
+		        return;
+		}		
 			}while(pilihan != 0);
 		}
 
-// ==========================================
-// 1. IMPLEMENTASI STATEMENT CONTROL & LOOPING
-// ==========================================
+
 void formLogin(string role) {
     string username, password;
     
@@ -1398,13 +1513,6 @@ int main() {
         cout << setw(35) << setfill(' ') << "" << "Pilih menu (1/2/3) : ";
         getline(cin, pilihanUtama);
 
-        if (cin.fail()){
-            cetakTengah("[!] Hanya masukan angka, tekan ENTER untuk mengulangi.", MERAH_CERAH);
-            cin.clear();
-            cin.ignore(1000, '\n');
-            tungguEnter();
-        }
-
         if (pilihanUtama == "1") {
             subMenuLogin(); 
         } else if (pilihanUtama == "2") {
@@ -1419,7 +1527,7 @@ int main() {
             cout << "\n\n";
         
             cetakTengah("[ Tekan ENTER untuk menutup terminal ]", MAGENTA_CERAH);
-            cin.ignore();
+            tungguEnter();
             
             exit(0); 
         } else {
